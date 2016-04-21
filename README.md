@@ -6,7 +6,7 @@ Transaction IDs are unique strings that can be used to follow a chain of related
 
 ## Setup
 
-This is an Nginx module; it is meant to be used on an nginx proxy at the edge of your datacenter.  This module will fill a variable named ``$txid120`` for use in an Nginx directive like [``proxy_set_header``](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header). Set a header (maybe ``Txid``?) on every request entering your network.  If you use the same Nginx instance to also handle requests between services already within your network, don't reassign the header for those requests - the idea is that all requests related to the original end user request have the same Transaction ID.
+This is an Nginx module; it is meant to be used on an nginx proxy at the edge of your datacenter.  This module will fill a variable named ``$txid120`` for use in an Nginx directive like [``proxy_set_header``](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header). Set a header (maybe ``Txid``?) using the value of this variable on every request entering your network.  If you use the same Nginx instance to also handle requests between services already within your network, don't reassign the header for those requests - the idea is that all requests related to the original end user request have the same Transaction ID.
 
 In the simplest case, you can do something like this:
 
@@ -56,4 +56,4 @@ bitprob(10000*(1/1000000), 64)
 = 2.717e-24
 ```
 
-So, in any given microsecond, we're likely to see a collision 2.717e-24 of the time. (.000000000000000000000002717) Or, in other words, roughly one in every 3.86e23 microseconds will have a collision, or roughly once every 11.67 billion years, or roughly 1.2 times the expected lifetime of the Sun.
+So, in any given microsecond, we're likely to see a collision 2.717e-24 of the time. (0.000000000000000000000002717) Or, in other words, roughly one in every 3.86e23 microseconds will have a collision, or roughly once every 11.67 billion years, or roughly 1.2 times the expected lifetime of the Sun.
