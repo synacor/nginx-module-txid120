@@ -1,0 +1,80 @@
+<script>
+var chars_txid120 = "0123456789:@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+var chars_b64     = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+var charmap = {};
+for (var i=0; i<chars_txid120.length; i++) {
+  charmap[chars_txid120.charAt(i)] = chars_b64.charAt(i);
+}
+
+function txid120_analyze() {
+  var output = document.getElementById("output");
+  while (output.firstChild) output.removeChild(output.firstChild);
+
+  function error(message) {
+    output.textContent = "Error: " + message;
+  }
+  function log(key, value) {
+    var table = output.getElementsByTagName("table");
+    if (table.length) {
+      table = table[0];
+    } else {
+      table = document.createElement("table");
+      output.appendChild(table);
+    }
+
+    var row = document.createElement("tr");
+    var th = document.createElement("th");
+    th.textContent = key;
+    row.appendChild(th);
+    var td = document.createElement("td");
+    td.textContent = value;
+    row.appendChild(td);
+    table.appendChild(row);
+  }
+
+  var raw = document.getElementById("txid").value;
+  if (raw.length != 20) return error("Expected 20 bytes, but you entered "+raw.length+".");
+  if (!/^[0-9\:\@A-Za-z]{20}$/.exec(raw)) return error("Invalid characters in txid.");
+  log("raw", raw);
+
+  var b64 = raw.replace(/([0-9\:\@A-Za-z])/g, function(m,c){return charmap[c];});
+  log("b64", b64);
+  var txid = atob(b64);
+  if (txid.length != 15) return error("Expected 15 bytes of decoded txid.");
+
+  var hex = txid.replace(/(.)/g, function(m,c){var h = c.charCodeAt(0).toString(16); return h.length==2?h:"0"+h;});
+  log("hex", hex);
+
+  var time = 0;
+  for (var i=0; i<=6; i++) {
+    time += txid.charCodeAt(i) * Math.pow(2, 8*(6-i));
+  }
+  log("epoch", (time/1e6).toFixed(6));
+  log("local", new Date(time/1e3).toString());
+  log("utc", new Date(time/1e3).toUTCString());
+  log("iso", new Date(time/1e3).toISOString());
+}
+</script>
+<style>
+body {
+  font-family: sans-serif;
+}
+#txid {
+  font-family: monospace;
+}
+#output table {
+  font-family: monospace;
+  border-collapse: collapse;
+}
+#output table th, #output table td {
+  border: 1px solid #cccccc;
+  padding: 2px 5px;
+}
+</style>
+
+<form action="about:blank" onsubmit="txid120_analyze(); return false;">
+<div>txid120: <input type="text" name="txid" id="txid" size="20" autofocus/> <input type="submit" value="Analyze!"/></div>
+</form>
+<hr/>
+<div id="output">
+</div>
