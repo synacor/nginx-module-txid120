@@ -47,11 +47,13 @@ The remaining 64 bits are random data, which means there is a _very_ small proba
 
 At microsecond scale and assuming 10k reqs/sec, 64 bits of entropy gives a collision probability of:
 
+```
 bitprob(10000*(1/1000000), 64)
 = 1 - 1 / Math.pow(Math.E, (Math.pow(10000*(1/1000000),2) / (2 * Math.pow(2,64))))
 = 1 - 1 / ( e ^ (0.0001 / 3.68e19) )
 = 1 - 1 / ( e ^ (2.717e-24) )
 = 1 - 1 / ( 1 + 2.717e-24 )
 = 2.717e-24
+```
 
 So, in any given microsecond, we're likely to see a collision 2.717e-24 of the time. (.000000000000000000000002717) Or, in other words, roughly one in every 3.86e23 microseconds will have a collision, or roughly once every 11.67 billion years, or roughly 1.2 times the expected lifetime of the Sun.
