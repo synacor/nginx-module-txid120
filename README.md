@@ -72,7 +72,7 @@ blk 0.......................1.......................2.......................3...
 
 The remaining 64 bits are random data, which means there is a _very_ small probability of Transaction ID collisions within each microsecond. There can't be collisions across microseconds, since the microsecond-granularity time is included in the identifier.
 
-At microsecond scale and assuming 10k reqs/sec, 64 bits of entropy gives a collision probability of:
+At microsecond scale and assuming 10k reqs/sec (or, ``10000*(1/1000000)`` requests per microsecond), 64 bits of entropy gives a collision probability of:
 
 ```
 bitprob(10000*(1/1000000), 64)
