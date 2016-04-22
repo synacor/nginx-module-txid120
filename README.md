@@ -14,6 +14,25 @@ In the simplest case, you can do something like this:
 proxy_set_header Txid $txid120;
 ```
 
+The module can be compiled into your build of Nginx the same as any other Nginx module.
+
+If you want to test the generation logic on your system before you build it into Nginx, the included ``test.pl`` script will compile a standalone version of the code that generates one Transaction ID and exits; it will then analyze the output of this program to ensure that the generated timestamp is valid and that the random entropy seems sane:
+
+```
+$ ./test.pl 
+build    : 8778 bytes written 0.15 seconds ago [ OK ]
+txid raw : 1H47Yf3DqfG8bW2frPAT [ OK ]
+txid b64 : BTEHkrDP2rSIniCr3bMf
+txid hex : 05310792b0cfdab4889e20abddb31f [ OK ]
+txid thex: 05310792b0cfda
+strt time: 1461283479.145378
+txid time: 1461283479.146458 [ OK ]
+end  time: 1461283479.147018
+txid rand: b4889e20abddb31f [ OK ]
+
+All 5/5 tests pass.
+```
+
 ## Usage
 
 Once your datacenter-edge Nginx is assigning Transaction IDs to new transactions, your internal services need to be modified to pass any incoming Transaction IDs along to sub-requests they make.  These are the general rules your services should follow:
