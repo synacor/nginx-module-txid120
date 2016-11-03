@@ -1,5 +1,6 @@
 #include "ngx_http_txid120_logic.h"
 
+static const uint8_t NMEMB = 1;
 static const char b64_chars[] = "0123456789:@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 void ngx_http_txid120_logic(FILE* urandom, uint8_t* txid120) {
@@ -16,7 +17,9 @@ void ngx_http_txid120_logic(FILE* urandom, uint8_t* txid120) {
   }
 
   // fill remaining 8 bytes with random data
-  fread(&txid[7], 8, 1, urandom);
+  if (fread(&txid[7], 8, NMEMB, urandom) != NMEMB) {
+    printf("failed reading /dev/urandom");
+  }
 
   // encode as base64
   for (i=0; i<5; i++) {
