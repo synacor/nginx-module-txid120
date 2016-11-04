@@ -16,7 +16,16 @@ void ngx_http_txid120_logic(FILE* urandom, uint8_t* txid120) {
   }
 
   // fill remaining 8 bytes with random data
-  fread(&txid[7], 8, 1, urandom);
+  if (fread(&txid[7], 8, 1, urandom) < 1) {
+    // if we read fewer than the one block of eight bytes we wanted, which should
+    // happen only in truly ridiculous circumstances, use eight bytes of zeroes.
+    // logging here is dangerous if the failure is persisitent because it could
+    // quickly fill the log, and any likely failures related to /dev/urandom
+    // will almost certainly be related to opening it, not reading from it.
+    for (i=7; i<=14; i++) {
+      txid[i] = 0;
+    }
+  }
 
   // encode as base64
   for (i=0; i<5; i++) {
